@@ -1,18 +1,22 @@
 import requests
 from random import choice
-from random import choice 
- 
-HEADERS = {
-            'User-Agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/600.5.17 (KHTML, like Gecko) Version/8.0.5 Safari/600.5.17'
-          }
- 
+from progress.bar import Bar
+
 url = 'http://yandex.ru/'
  
+open("goods_proxy.txt", "w").close()
+
+lines = sum(1 for line in open('proxy.txt', 'r'))
+
 proxys = open('proxy.txt').read().split('\n')
- 
+useragents = open('ua.txt').read().split('\n')
+bar = Bar('Выполнение ', max=lines)
+
 for i in proxys:
     proxy = {'http':'http://' + choice(proxys)}
-    
+    HEADERS = {'User-Agent' : choice(useragents)}
+    bar.next()
+
     try:
         req = requests.get(url, proxies=proxy, headers = HEADERS, timeout = 10)
         if req.status_code == 200:
@@ -24,4 +28,6 @@ for i in proxys:
             outfile.close()  
         
     except:
-        print('Ошибка!')            
+        # print('Ошибка!')
+        outfile.close()
+bar.finish()                    
